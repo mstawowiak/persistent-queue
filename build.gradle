@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'com.github.mstawowiak'
+version = '1.0.0-SNAPSHOT'
+description = 'Simple, lightweight and fast persistent queue based on Berkeley DB'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    codeQualityConfig
+}
+
+dependencies {
+    codeQualityConfig  group: 'com.github.mstawowiak',  name: 'code-quality',   version: '1.0.0-SNAPSHOT'
+    testImplementation group: 'junit',                  name: 'junit',          version: '4.12'
+}
+
+checkstyle {
+    config = resources.text.fromArchiveEntry(configurations.codeQualityConfig,
+            "code-quality/static-code-analysis/checkstyle.xml")
+    sourceSets = [sourceSets.main]
+    toolVersion = '8.4'
+}
+
+pmd {
+    ruleSetConfig = resources.text.fromArchiveEntry(configurations.codeQualityConfig,
+            "code-quality/static-code-analysis/pmd-ruleset.xml")
+    consoleOutput = true
+    sourceSets = [sourceSets.main]
+    toolVersion = '5.8.1'
+}
