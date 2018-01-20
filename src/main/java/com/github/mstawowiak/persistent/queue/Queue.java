@@ -1,5 +1,7 @@
 package com.github.mstawowiak.persistent.queue;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * A collection designed for holding elements prior to processing.
  *
@@ -24,5 +26,7 @@ public interface Queue<P extends Payload> {
     boolean isEmpty();
 
     void close();
+
+    Semaphore getSemaphore();
 
 }

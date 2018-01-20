@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.Semaphore;
 
 public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
 
@@ -41,6 +42,15 @@ public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
      */
     private int opsCounter;
 
+    /**
+     * Semaphore provides blocking queue future
+     */
+    protected final Semaphore semaphore;
+
+    public BerkeleyDbQueue(final String queueEnvPath, final String queueName) {
+        this(queueEnvPath, queueName, 1);
+    }
+
     public BerkeleyDbQueue(final String queueEnvPath, final String queueName, final int batchSize) {
         // Create parent dirs for queue environment directory
         new File(queueEnvPath).mkdirs();
@@ -59,6 +69,7 @@ public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
         dbConfig.setBtreeComparator(new KeyComparator());
 
         this.queueDatabase = dbEnvironment.openDatabase(null, queueName, dbConfig);
+        this.semaphore = new Semaphore((int) queueDatabase.count());
         this.queueName = queueName;
         this.batchSize = batchSize;
         this.opsCounter = 0;
@@ -98,6 +109,8 @@ public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
                 queueDatabase.sync();
                 opsCounter = 0;
             }
+
+            semaphore.release();
         } catch (Exception ex) {
             throw new EnqueueException("Unable to enqueue payload", ex);
         } finally {
@@ -183,6 +196,11 @@ public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
     public void close() {
         queueDatabase.close();
         dbEnvironment.close();
+    }
+
+    @Override
+    public Semaphore getSemaphore() {
+        return semaphore;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.mstawowiak.persistent.queue;
 
+import com.github.mstawowiak.persistent.queue.data.SimplePayload;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -17,16 +18,16 @@ import static org.testng.Assert.assertTrue;
 /**
  * Tests for {@link BerkeleyDbQueue}
  */
-public class BerkeleyDbQueueNGTest {
+public class BerkeleyDbQueueTest {
 
     private Queue<SimplePayload> queue;
-    private String queueName = "unit_tests";
 
-    private static final String queueDirName = "./testBerkeleyDbQueue";
+    private static final String queueName = BerkeleyDbQueueTest.class.getSimpleName();
+    private static final String queueDirName = "build/" + queueName;
     private static final File queueDir = new File(queueDirName);
 
     private Queue<SimplePayload> berkeleyDbQueue() {
-        return new BerkeleyDbQueue<>(queueDirName, queueName, 1);
+        return new BerkeleyDbQueue<>(queueDirName, queueName);
     }
 
     @BeforeClass

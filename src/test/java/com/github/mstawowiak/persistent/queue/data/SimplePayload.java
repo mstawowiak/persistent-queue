@@ -1,5 +1,6 @@
-package com.github.mstawowiak.persistent.queue;
+package com.github.mstawowiak.persistent.queue.data;
 
+import com.github.mstawowiak.persistent.queue.Payload;
 import java.math.BigInteger;
 
 public class SimplePayload implements Payload {
