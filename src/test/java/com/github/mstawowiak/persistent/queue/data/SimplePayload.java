@@ -1,9 +1,8 @@
 package com.github.mstawowiak.persistent.queue.data;
 
-import com.github.mstawowiak.persistent.queue.Payload;
 import java.math.BigInteger;
 
-public class SimplePayload implements Payload {
+public class SimplePayload implements TestPayload {
 
     private static final long serialVersionUID = 8222352509404340736L;
 
@@ -17,10 +16,12 @@ public class SimplePayload implements Payload {
         this.bigNumber = bigNumber;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Integer getNumber() {
         return number;
     }

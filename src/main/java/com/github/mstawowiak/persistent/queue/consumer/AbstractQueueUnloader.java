@@ -4,6 +4,7 @@ import com.github.mstawowiak.commons.logging.ContextLogger;
 import com.github.mstawowiak.commons.logging.ContextLoggerFactory;
 import com.github.mstawowiak.persistent.queue.Payload;
 import com.github.mstawowiak.persistent.queue.Queue;
+import com.github.mstawowiak.persistent.queue.strategy.WaitStrategy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,10 +18,12 @@ public abstract class AbstractQueueUnloader<P extends Payload> implements QueueU
 
     protected final Queue<P> queue;
     protected final Consumer<P> consumer;
+    protected final WaitStrategy waitStrategy;
 
     public AbstractQueueUnloader(Queue<P> queue, QueueUnloaderConfig<P> config) {
         this.queue = queue;
         this.consumer = config.getConsumer();
+        this.waitStrategy = config.getWaitStrategy();
 
         this.startThread = Executors.newSingleThreadExecutor(config.getThreadFactory());
         this.consumerThreadPool = Executors.newFixedThreadPool(config.getNumOfThreads(), config.getThreadFactory());
