@@ -2,8 +2,10 @@ package com.github.mstawowiak.persistent.queue.consumer;
 
 import com.github.mstawowiak.persistent.queue.BerkeleyDbQueue;
 import com.github.mstawowiak.persistent.queue.Queue;
-import com.github.mstawowiak.persistent.queue.data.DoNothingSimplePayloadConsumer;
+import com.github.mstawowiak.persistent.queue.data.DoNothingTestPayloadConsumer;
+import com.github.mstawowiak.persistent.queue.data.RandomErrorTestPayloadConsumer;
 import com.github.mstawowiak.persistent.queue.data.SimplePayload;
+import com.github.mstawowiak.persistent.queue.data.TestPayload;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -23,7 +25,7 @@ public class BlockingQueueUnloaderTest {
     private static final String queueDirName = "build/" + queueName;
     private static final File queueDir = new File(queueDirName);
 
-    private Queue<SimplePayload> berkeleyDbQueue() {
+    private Queue<TestPayload> berkeleyDbQueue() {
         return new BerkeleyDbQueue<>(queueDirName, queueName);
     }
 
@@ -43,13 +45,29 @@ public class BlockingQueueUnloaderTest {
 
     @Test
     public void shouldUnloadAllPayloads() throws InterruptedException {
-        Queue<SimplePayload> queue = berkeleyDbQueue();
+        Queue<TestPayload> queue = berkeleyDbQueue();
 
         QueueUnloader unloader = new BlockingQueueUnloader<>(queue,
-                new QueueUnloaderConfig.Builder<SimplePayload>()
-                        .consumer(new DoNothingSimplePayloadConsumer())
+                new QueueUnloaderConfig.Builder<TestPayload>()
+                        .consumer(new DoNothingTestPayloadConsumer())
                         .build());
 
+        shouldLoadAndUnloadQueue(queue, unloader);
+    }
+
+    @Test
+    public void shouldUnloadAllPayloadsDespiteRandomErrors() throws InterruptedException {
+        Queue<TestPayload> queue = berkeleyDbQueue();
+
+        QueueUnloader unloader = new BlockingQueueUnloader<>(queue,
+                new QueueUnloaderConfig.Builder<TestPayload>()
+                        .consumer(new RandomErrorTestPayloadConsumer(15))
+                        .build());
+
+        shouldLoadAndUnloadQueue(queue, unloader);
+    }
+
+    private void shouldLoadAndUnloadQueue(Queue<TestPayload> queue, QueueUnloader unloader) throws InterruptedException {
         assertEquals(queue.size(), 0);
         for (int i = 0; i < 100; i++) {
             queue.push(new SimplePayload("test" + i, i, BigInteger.valueOf(i)));

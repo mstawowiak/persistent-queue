@@ -2,8 +2,9 @@ package com.github.mstawowiak.persistent.queue.consumer;
 
 import com.github.mstawowiak.persistent.queue.BerkeleyDbQueue;
 import com.github.mstawowiak.persistent.queue.Queue;
-import com.github.mstawowiak.persistent.queue.data.DoNothingSimplePayloadConsumer;
+import com.github.mstawowiak.persistent.queue.data.DoNothingTestPayloadConsumer;
 import com.github.mstawowiak.persistent.queue.data.SimplePayload;
+import com.github.mstawowiak.persistent.queue.data.TestPayload;
 import java.math.BigInteger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +20,7 @@ public class BlockingQueueUnloaderPerformanceTest {
     private static final AtomicLong counter = new AtomicLong(0);
     private static volatile long timestamp;
 
-    private static Queue<SimplePayload> queue;
+    private static Queue<TestPayload> queue;
 
     public static void main(String[] args) throws InterruptedException {
         queue = berkeleyDbQueue();
@@ -42,7 +43,7 @@ public class BlockingQueueUnloaderPerformanceTest {
         }
     }
 
-    private static Queue<SimplePayload> berkeleyDbQueue() {
+    private static Queue<TestPayload> berkeleyDbQueue() {
         final String queueName = BlockingQueueUnloaderPerformanceTest.class.getSimpleName();
         final String queueDirName = "build/" + queueName;
 
@@ -51,9 +52,10 @@ public class BlockingQueueUnloaderPerformanceTest {
 
     private static QueueUnloader queueUnloader() {
         return new BlockingQueueUnloader<>(queue,
-                new QueueUnloaderConfig.Builder<SimplePayload>()
+                new QueueUnloaderConfig.Builder<TestPayload>()
                         .numOfThreads(THREADS_COUNT)
-                        .consumer(new DoNothingSimplePayloadConsumer())
+                        .consumer(new DoNothingTestPayloadConsumer())
+                        //.consumer(new RandomErrorTestPayloadConsumer())
                         .build());
     }
 
@@ -64,7 +66,7 @@ public class BlockingQueueUnloaderPerformanceTest {
             while (true) {
                 long numberOfEnqueued = counter.incrementAndGet();
 
-                queue.push(new SimplePayload("t", 1, BigInteger.valueOf(1)));
+                queue.push(new SimplePayload("t", (int) numberOfEnqueued, BigInteger.valueOf(numberOfEnqueued)));
 
                 if (numberOfEnqueued % 10000 == 0) {
                     long tps = 10000 * 1000 / (System.currentTimeMillis() - timestamp);
