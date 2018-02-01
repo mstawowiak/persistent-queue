@@ -24,7 +24,7 @@ dependencies {
     implementation group: 'org.slf4j',              name: 'slf4j-api',      version: '1.7.25'
     implementation group: 'com.github.mstawowiak',  name: 'logging',        version: '1.0.0-SNAPSHOT'
 
-    codeQualityConfig  group: 'com.github.mstawowiak',  name: 'code-quality',   version: '1.0.0-SNAPSHOT'
+    codeQualityConfig  group: 'com.github.mstawowiak',  name: 'code-quality',   version: '1.0.0'
     testImplementation group: 'commons-io',             name: 'commons-io',     version: '2.6'
     testImplementation group: 'org.testng',             name: 'testng',         version: '6.13.1'
 }
