@@ -77,6 +77,8 @@ public class BerkeleyDbQueue<P extends Payload> implements Queue<P> {
 
     private static class KeyComparator implements Comparator<byte[]>, Serializable {
 
+        private static final long serialVersionUID = 1138169225069531524L;
+
         @Override
         public int compare(byte[] key1, byte[] key2) {
             return new BigInteger(key1).compareTo(new BigInteger(key2));

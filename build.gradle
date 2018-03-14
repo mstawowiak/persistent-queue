@@ -24,7 +24,7 @@ dependencies {
     implementation group: 'org.slf4j',              name: 'slf4j-api',      version: '1.7.25'
     implementation group: 'com.github.mstawowiak',  name: 'logging',        version: '1.0.0-SNAPSHOT'
 
-    codeQualityConfig  group: 'com.github.mstawowiak',  name: 'code-quality',   version: '1.0.0'
+    codeQualityConfig  group: 'com.github.mstawowiak',  name: 'code-quality',   version: '1.1.0'
     testImplementation group: 'commons-io',             name: 'commons-io',     version: '2.6'
     testImplementation group: 'org.testng',             name: 'testng',         version: '6.13.1'
 }
@@ -37,13 +37,14 @@ checkstyle {
     config = resources.text.fromArchiveEntry(configurations.codeQualityConfig,
             "code-quality/static-code-analysis/checkstyle.xml")
     sourceSets = [sourceSets.main]
-    toolVersion = '8.4'
+    toolVersion = '8.8'
 }
 
 pmd {
+    ruleSets = []
     ruleSetConfig = resources.text.fromArchiveEntry(configurations.codeQualityConfig,
             "code-quality/static-code-analysis/pmd-ruleset.xml")
     consoleOutput = true
     sourceSets = [sourceSets.main]
-    toolVersion = '5.8.1'
+    toolVersion = '6.1.0'
 }
